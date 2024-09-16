@@ -76,11 +76,15 @@ public class ConnectionHandler {
             outputStreamWriter.write(generateHeader(HTTP_STATUS_404, null));
             outputStreamWriter.newLine();
             outputStreamWriter.flush();
+        } else {
+            outputStreamWriter.write(generateHeader(HTTP_STATUS_200, null));
+            outputStreamWriter.newLine();
+            outputStreamWriter.flush();
         }
     }
 
     private void checkForUnsupportedMethods(final BufferedWriter outputStreamWriter, String[] startLineTokens) throws IOException {
-        if (!"GET".equals(startLineTokens[0])) {
+        if (!"GET".equals(startLineTokens[0]) && !"POST".equals(startLineTokens[0])) {
             outputStreamWriter.write(generateHeader(HTTP_STATUS_501, null));
             outputStreamWriter.newLine();
             outputStreamWriter.flush();
@@ -123,7 +127,8 @@ public class ConnectionHandler {
                 .replace("{{HTTP_STATUS}}", status);
 
 
-        header = header.replace("{{CONTENT_LENGTH}}", Integer.toString(90));
+//        header = header.replace("{{CONTENT_LENGTH}}", Integer.toString(header.length()));
+        header = setContentLength(header, filename);
 
         System.out.println("-> Responded with the following HTTP-headers:");
         System.out.println(header);
